@@ -6,7 +6,67 @@
     <title>Contact - Mr Samir Dowlut</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvHEnXQby9FWF7S_CvcQqU1jPJvFa6dlw"></script>
+    <script>
+        // Initialize and add the map
+        function initMap() {
+            // Center the map on Belfast
+            const belfast = { lat: 54.5973, lng: -5.9301 };
+            const map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 9,  // Adjusted zoom level to show more locations
+                center: belfast,
+                styles: [
+                    {
+                        "featureType": "all",
+                        "elementType": "geometry",
+                        "stylers": [{ "color": "#f5f5f5" }]
+                    }
+                ]
+            });
+
+            // Add markers for each location
+            document.querySelectorAll('.location').forEach(location => {
+                const lat = parseFloat(location.dataset.lat);
+                const lng = parseFloat(location.dataset.lng);
+                const title = location.querySelector('h3').textContent;
+                const address = location.querySelector('p').textContent;
+
+                const marker = new google.maps.Marker({
+                    position: { lat, lng },
+                    map: map,
+                    title: title,
+                    animation: google.maps.Animation.DROP
+                });
+
+                const infowindow = new google.maps.InfoWindow({
+                    content: `<div class="info-window"><h4>${title}</h4><p>${address}</p></div>`
+                });
+
+                marker.addListener('click', () => {
+                    infowindow.open(map, marker);
+                });
+
+                // Add click event to location cards
+                location.addEventListener('click', () => {
+                    map.setCenter({ lat, lng });
+                    map.setZoom(15);
+                    infowindow.open(map, marker);
+                });
+            });
+        }
+
+        // Handle potential API loading errors
+        function handleMapError() {
+            const mapDiv = document.getElementById('map');
+            mapDiv.innerHTML = '<div class="map-error">Please refresh the page to load the map. If the issue persists, check back later.</div>';
+            mapDiv.style.display = 'flex';
+            mapDiv.style.justifyContent = 'center';
+            mapDiv.style.alignItems = 'center';
+            mapDiv.style.backgroundColor = '#f8f8f8';
+            mapDiv.style.padding = '20px';
+            mapDiv.style.textAlign = 'center';
+        }
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvHEnXQby9FWF7S_CvcQqU1jPJvFa6dlw&callback=initMap&v=weekly" async defer onerror="handleMapError()"></script>
 </head>
 <body>
     <div class="top-bar">
@@ -73,48 +133,5 @@
             <div id="map"></div>
         </div>
     </div>
-
-    <script>
-        function initMap() {
-            // Center the map on Belfast
-            const belfast = { lat: 54.5973, lng: -5.9301 };
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 12,
-                center: belfast,
-                styles: [
-                    {
-                        "featureType": "all",
-                        "elementType": "geometry",
-                        "stylers": [{ "color": "#f5f5f5" }]
-                    }
-                ]
-            });
-
-            // Add markers for each location
-            document.querySelectorAll('.location').forEach(location => {
-                const lat = parseFloat(location.dataset.lat);
-                const lng = parseFloat(location.dataset.lng);
-                const title = location.querySelector('h3').textContent;
-                const address = location.querySelector('p').textContent;
-
-                const marker = new google.maps.Marker({
-                    position: { lat, lng },
-                    map: map,
-                    title: title,
-                    animation: google.maps.Animation.DROP
-                });
-
-                const infowindow = new google.maps.InfoWindow({
-                    content: `<div class="info-window"><h4>${title}</h4><p>${address}</p></div>`
-                });
-
-                marker.addListener('click', () => {
-                    infowindow.open(map, marker);
-                });
-            });
-        }
-
-        window.onload = initMap;
-    </script>
 </body>
 </html> 
