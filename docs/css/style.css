@@ -1,0 +1,287 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+.top-bar {
+    background-color: white;
+    padding: 10px 5%;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.social-links {
+    display: flex;
+    gap: 15px;
+}
+
+.social-links a {
+    color: #444;
+    text-decoration: none;
+}
+
+.contact-info {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.book-consultation {
+    background-color: #f0f0f0;
+    color: #444;
+    padding: 8px 15px;
+    border-radius: 4px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.phone-number {
+    color: #444;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.main-nav {
+    background-color: white;
+    padding: 15px 5%;
+    border-bottom: 1px solid #eee;
+}
+
+.logo {
+    text-decoration: none;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.profile-image {
+    width: 120px;
+    height: 120px;
+    border-radius: 5px;
+    object-fit: contain;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo h1 {
+    font-size: 24px;
+    margin: 0;
+    font-weight: 600;
+}
+
+.logo p {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.nav-links {
+    margin-top: 20px;
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    color: #444;
+    text-decoration: none;
+    font-size: 16px;
+    position: relative;
+}
+
+.nav-links a:hover {
+    color: #000;
+}
+
+.nav-links a.active {
+    color: #8b0000;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.testimonial {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.testimonial p {
+    margin-bottom: 10px;
+}
+
+.date {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+h1 {
+    margin-bottom: 2rem;
+}
+
+/* About Page Styles */
+.about-section {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+.about-section h1 {
+    color: #333;
+    margin-bottom: 30px;
+    font-size: 32px;
+}
+
+.about-section h2 {
+    color: #444;
+    margin: 25px 0 15px;
+    font-size: 24px;
+}
+
+.about-content {
+    line-height: 1.8;
+}
+
+.about-content p {
+    margin-bottom: 20px;
+    color: #555;
+    font-size: 16px;
+}
+
+.about-content .intro {
+    font-size: 18px;
+    color: #444;
+    line-height: 1.9;
+    margin-bottom: 30px;
+}
+
+/* Qualifications and Publications Styles */
+.qualifications-list,
+.publications-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 1.5rem 0;
+}
+
+.qualifications-list li,
+.publications-list li {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.qualifications-list li::before,
+.publications-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #007bff;
+}
+
+.publications-list li {
+    font-size: 0.95rem;
+    text-align: justify;
+}
+
+/* Contact Page Styles */
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.contact-locations {
+    padding-right: 2rem;
+}
+
+#map {
+    width: 100%;
+    height: 600px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.location {
+    background-color: #f9f9f9;
+    border: 1px solid #eee;
+    border-radius: 5px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.location:hover {
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.location h3 {
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.location p {
+    color: #666;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.location i {
+    color: #8b0000;
+}
+
+.info-window {
+    padding: 0.5rem;
+}
+
+.info-window h4 {
+    margin: 0 0 0.5rem 0;
+    color: #333;
+}
+
+.info-window p {
+    margin: 0;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-locations {
+        padding-right: 0;
+    }
+
+    #map {
+        height: 400px;
+        margin-top: 2rem;
+    }
+} 
