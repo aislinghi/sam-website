@@ -10,26 +10,37 @@
         #map {
             min-height: 400px;
             background: #f5f5f5;
+            position: relative;
         }
         .map-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 400px;
             background: #f5f5f5;
             color: #666;
             font-size: 1.1rem;
+            z-index: 1;
         }
         .map-error {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 400px;
             background: #fff0f0;
             color: #666;
             font-size: 1.1rem;
             text-align: center;
             padding: 20px;
+            z-index: 2;
         }
     </style>
 </head>
@@ -104,13 +115,36 @@
     <script>
         let map;
         let markers = [];
-        const MAP_API_KEY = 'AIzaSyDvHEnXQby9FWF7S_CvcQqU1jPJvFa6dlw'; // This should be replaced with your restricted API key
 
+        // Function to show error message
+        function showError(message) {
+            const mapDiv = document.getElementById('map');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'map-error';
+            errorDiv.innerHTML = `
+                <div>
+                    <p>${message}</p>
+                    <p>Please try refreshing the page. If the problem persists, check your internet connection.</p>
+                    <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; border: none; background: #007bff; color: white; border-radius: 4px; cursor: pointer;">Refresh Page</button>
+                </div>
+            `;
+            mapDiv.appendChild(errorDiv);
+        }
+
+        // Function to initialize map
         function initMap() {
+            const mapDiv = document.getElementById('map');
+            
+            // Check if Google Maps API is loaded
+            if (!window.google || !window.google.maps) {
+                showError('Google Maps failed to load.');
+                return;
+            }
+
             try {
                 const belfast = { lat: 54.5973, lng: -5.9301 };
                 
-                map = new google.maps.Map(document.getElementById("map"), {
+                map = new google.maps.Map(mapDiv, {
                     zoom: 9,
                     center: belfast,
                     mapTypeControl: false,
@@ -127,13 +161,13 @@
                     const lng = parseFloat(location.dataset.lng);
                     const title = location.querySelector('h3').textContent;
                     const address = location.querySelector('p').textContent;
-                    const position = { lat, lng };
-
+                    
                     if (isNaN(lat) || isNaN(lng)) {
                         console.error('Invalid coordinates for location:', title);
                         return;
                     }
 
+                    const position = { lat, lng };
                     const marker = new google.maps.Marker({
                         position,
                         map,
@@ -171,32 +205,35 @@
                         if (map.getZoom() > 12) map.setZoom(12);
                     });
                 }
+
+                // Remove loading message if map loads successfully
+                const loadingDiv = mapDiv.querySelector('.map-loading');
+                if (loadingDiv) {
+                    loadingDiv.remove();
+                }
             } catch (error) {
                 console.error('Error initializing map:', error);
-                handleMapError();
+                showError('Error initializing the map.');
             }
         }
 
-        function handleMapError() {
-            const mapDiv = document.getElementById('map');
-            mapDiv.innerHTML = `
-                <div class="map-error">
-                    <div>
-                        <p>Unable to load the map at this time.</p>
-                        <p>Please ensure you have allowed access to Google Maps and try refreshing the page.</p>
-                        <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; border: none; background: #007bff; color: white; border-radius: 4px; cursor: pointer;">Refresh Page</button>
-                    </div>
-                </div>
-            `;
-        }
+        // Load Google Maps API
+        window.initMap = initMap;  // Make initMap global
 
-        // Load Google Maps API with error handling
-        const script = document.createElement('script');
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${MAP_API_KEY}&callback=initMap`;
-        script.async = true;
-        script.defer = true;
-        script.onerror = handleMapError;
-        document.head.appendChild(script);
+        // Add error event listener before loading the script
+        window.gm_authFailure = function() {
+            showError('Google Maps authentication failed. Please check your API key.');
+        };
+
+        // Load the Maps API script
+        (function loadGoogleMaps() {
+            const script = document.createElement('script');
+            script.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDvHEnXQby9FWF7S_CvcQqU1jPJvFa6dlw&callback=initMap';
+            script.async = true;
+            script.defer = true;
+            script.onerror = () => showError('Failed to load Google Maps.');
+            document.head.appendChild(script);
+        })();
     </script>
 </body>
 </html> 
