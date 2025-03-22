@@ -5,10 +5,13 @@ const marked = require('marked');
 const ejs = require('ejs');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
+
+// Make environment variables available to templates
+app.locals.process = { env: process.env };
 
 // Serve static files
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Set view engine
 app.set('view engine', 'ejs');
