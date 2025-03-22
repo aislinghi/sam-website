@@ -6,6 +6,32 @@
     <title>Contact - Mr Samir Dowlut</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        #map {
+            min-height: 400px;
+            background: #f5f5f5;
+        }
+        .map-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+            background: #f5f5f5;
+            color: #666;
+            font-size: 1.1rem;
+        }
+        .map-error {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 400px;
+            background: #fff0f0;
+            color: #666;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
     <div class="top-bar">
@@ -69,92 +95,108 @@
                     <p><i class="fas fa-map-marker-alt"></i> Unit 70, The Boulevard, Banbridge BT32 4LF</p>
                 </div>
             </div>
-            <div id="map"></div>
+            <div id="map">
+                <div class="map-loading">Loading map...</div>
+            </div>
         </div>
     </div>
 
     <script>
         let map;
         let markers = [];
+        const MAP_API_KEY = 'AIzaSyDvHEnXQby9FWF7S_CvcQqU1jPJvFa6dlw'; // This should be replaced with your restricted API key
 
         function initMap() {
-            const belfast = { lat: 54.5973, lng: -5.9301 };
-            
-            map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 9,
-                center: belfast,
-                mapTypeControl: false,
-                streetViewControl: false,
-                fullscreenControl: false
-            });
-
-            const locations = document.querySelectorAll('.location');
-            const bounds = new google.maps.LatLngBounds();
-
-            locations.forEach(location => {
-                const lat = parseFloat(location.dataset.lat);
-                const lng = parseFloat(location.dataset.lng);
-                const title = location.querySelector('h3').textContent;
-                const address = location.querySelector('p').textContent;
-                const position = { lat, lng };
-
-                const marker = new google.maps.Marker({
-                    position,
-                    map,
-                    title,
-                    animation: google.maps.Animation.DROP
+            try {
+                const belfast = { lat: 54.5973, lng: -5.9301 };
+                
+                map = new google.maps.Map(document.getElementById("map"), {
+                    zoom: 9,
+                    center: belfast,
+                    mapTypeControl: false,
+                    streetViewControl: false,
+                    fullscreenControl: false,
+                    gestureHandling: 'cooperative'
                 });
 
-                bounds.extend(position);
-                markers.push(marker);
+                const locations = document.querySelectorAll('.location');
+                const bounds = new google.maps.LatLngBounds();
 
-                const infowindow = new google.maps.InfoWindow({
-                    content: `<div class="info-window"><h4>${title}</h4><p>${address}</p></div>`
+                locations.forEach(location => {
+                    const lat = parseFloat(location.dataset.lat);
+                    const lng = parseFloat(location.dataset.lng);
+                    const title = location.querySelector('h3').textContent;
+                    const address = location.querySelector('p').textContent;
+                    const position = { lat, lng };
+
+                    if (isNaN(lat) || isNaN(lng)) {
+                        console.error('Invalid coordinates for location:', title);
+                        return;
+                    }
+
+                    const marker = new google.maps.Marker({
+                        position,
+                        map,
+                        title,
+                        animation: google.maps.Animation.DROP
+                    });
+
+                    bounds.extend(position);
+                    markers.push(marker);
+
+                    const infowindow = new google.maps.InfoWindow({
+                        content: `<div class="info-window"><h4>${title}</h4><p>${address}</p></div>`
+                    });
+
+                    marker.addListener('click', () => {
+                        markers.forEach(m => m.setAnimation(null));
+                        marker.setAnimation(google.maps.Animation.BOUNCE);
+                        setTimeout(() => marker.setAnimation(null), 750);
+                        infowindow.open(map, marker);
+                    });
+
+                    location.addEventListener('click', () => {
+                        markers.forEach(m => m.setAnimation(null));
+                        marker.setAnimation(google.maps.Animation.BOUNCE);
+                        setTimeout(() => marker.setAnimation(null), 750);
+                        map.panTo(position);
+                        map.setZoom(15);
+                        infowindow.open(map, marker);
+                    });
                 });
 
-                marker.addListener('click', () => {
-                    infowindow.open(map, marker);
-                });
-
-                location.addEventListener('click', () => {
-                    map.panTo(position);
-                    map.setZoom(15);
-                    infowindow.open(map, marker);
-                });
-            });
-
-            // Fit map to show all markers
-            map.fitBounds(bounds);
-            
-            // Add some padding to the bounds
-            const padded = google.maps.event.addListenerOnce(map, 'idle', () => {
-                map.setZoom(map.getZoom() - 0.5);
-            });
+                if (markers.length > 0) {
+                    map.fitBounds(bounds);
+                    google.maps.event.addListenerOnce(map, 'idle', () => {
+                        if (map.getZoom() > 12) map.setZoom(12);
+                    });
+                }
+            } catch (error) {
+                console.error('Error initializing map:', error);
+                handleMapError();
+            }
         }
 
         function handleMapError() {
             const mapDiv = document.getElementById('map');
-            mapDiv.innerHTML = '<div class="map-error">Unable to load the map. Please refresh the page or try again later.</div>';
+            mapDiv.innerHTML = `
+                <div class="map-error">
+                    <div>
+                        <p>Unable to load the map at this time.</p>
+                        <p>Please ensure you have allowed access to Google Maps and try refreshing the page.</p>
+                        <button onclick="window.location.reload()" style="margin-top: 10px; padding: 8px 16px; border: none; background: #007bff; color: white; border-radius: 4px; cursor: pointer;">Refresh Page</button>
+                    </div>
+                </div>
+            `;
         }
 
-        // Load Google Maps API
-        (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-            key: "AIzaSyDvHEnXQby9FWF7S_CvcQqU1jPJvFa6dlw",
-            v: "weekly"
-        });
-
-        // Initialize the map
-        async function initializeMap() {
-            try {
-                const { Map } = await google.maps.importLibrary("maps");
-                initMap();
-            } catch (error) {
-                handleMapError();
-                console.error("Error loading Google Maps:", error);
-            }
-        }
-
-        initializeMap();
+        // Load Google Maps API with error handling
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=${MAP_API_KEY}&callback=initMap`;
+        script.async = true;
+        script.defer = true;
+        script.onerror = handleMapError;
+        document.head.appendChild(script);
     </script>
 </body>
 </html> 
