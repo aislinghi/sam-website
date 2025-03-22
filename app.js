@@ -23,6 +23,10 @@ app.get('/about', (req, res) => {
     res.render('about');
 });
 
+app.get('/contact', (req, res) => {
+    res.render('contact');
+});
+
 app.get('/testimonials', async (req, res) => {
     try {
         const testimonialFiles = await fs.readdir(path.join(__dirname, 'testimonials'));
