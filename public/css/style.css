@@ -173,4 +173,33 @@ h1 {
     color: #444;
     line-height: 1.9;
     margin-bottom: 30px;
+}
+
+/* Qualifications and Publications Styles */
+.qualifications-list,
+.publications-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 1.5rem 0;
+}
+
+.qualifications-list li,
+.publications-list li {
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.qualifications-list li::before,
+.publications-list li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #007bff;
+}
+
+.publications-list li {
+    font-size: 0.95rem;
+    text-align: justify;
 } 
