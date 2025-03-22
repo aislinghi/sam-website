@@ -10,7 +10,9 @@ const port = process.env.PORT || 3000;
 // Make environment variables available to templates
 app.locals.process = { env: process.env };
 
-// Serve static files
+// Serve static files - add multiple static directories
+app.use('/css', express.static(path.join(__dirname, 'public/css')));
+app.use('/images', express.static(path.join(__dirname, 'public/images')));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Set view engine
